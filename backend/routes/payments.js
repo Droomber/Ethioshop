@@ -18,7 +18,7 @@ router.post("/chapa/initialize",protect,async(req,res,next)=>{try{
  order.payment.checkoutUrl=data.data.checkout_url;await order.save();
  res.status(201).json({checkoutUrl:data.data.checkout_url,orderId:order._id,message:"Redirecting to Chapa hosted checkout."});
  }catch(e){next(e);}});
-// router.get("/chapa/verify/:orderId",protect,async(req,res,next)=>{try{
+router.get("/chapa/verify/:orderId",protect,async(req,res,next)=>{try{
  const order = await Order.findOne({_id:req.params.orderId,user:req.user._id});if(!order)return res.status(404).json({message:"Order not found."});
  if(order.payment.status==="success")return res.json({paid:true,status:"success",order});
  const ref=req.query.reference;if(!ref)return res.json({paid:false,status:"pending",message:"Payment reference is not available yet. Check again shortly."});
@@ -34,5 +34,5 @@ router.post("/chapa/initialize",protect,async(req,res,next)=>{try{
  }
  if(["FAILED","CANCELLED","INCOMPLETE","BLOCKED"].includes(payment.status)){order.payment.status="failed";await order.save();}
  res.json({paid:false,status:payment.status||"pending",message:"Payment is not confirmed. Do not treat the order as paid."});
-//  }catch(e){next(e);}});
+ }catch(e){next(e);}});
 module.exports=router;
