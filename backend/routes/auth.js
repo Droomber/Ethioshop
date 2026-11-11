@@ -1,0 +1,6 @@
+const router=require("express").Router(),bcrypt=require("bcryptjs"),jwt=require("jsonwebtoken"),User=require("../models/User"),{protect}=require("../middleware/auth");
+const issue=u=>jwt.sign({id:u._id},process.env.JWT_SECRET,{expiresIn:"2h"});
+router.post("/register",async(req,res,next)=>{try{const{name,email,password}=req.body;if(!name||!email||!/^\S+@\S+\.\S+$/.test(email)||!password||password.length<8)return res.status(400).json({message:"Enter a name, valid email and password of at least 8 characters."});if(await User.findOne({email}))return res.status(409).json({message:"Email already registered."});const u=await User.create({name,email,password:await bcrypt.hash(password,12)});res.status(201).json({token:issue(u),user:{id:u._id,name:u.name,email:u.email,role:u.role}});}catch(e){next(e);}});
+router.post("/login",async(req,res,next)=>{try{const u=await User.findOne({email:String(req.body.email||"").toLowerCase()});if(!u||!(await bcrypt.compare(req.body.password||"",u.password)))return res.status(401).json({message:"Email or password is incorrect."});res.json({token:issue(u),user:{id:u._id,name:u.name,email:u.email,role:u.role}});}catch(e){next(e);}});
+router.get("/me",protect,(req,res)=>res.json({user:req.user}));
+module.exports=router;

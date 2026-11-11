@@ -1,0 +1,6 @@
+const CART_KEY="em_cart";function cartRead(){return JSON.parse(localStorage.getItem(CART_KEY)||"[]")}function cartSave(a){localStorage.setItem(CART_KEY,JSON.stringify(a));cartUpdateBadge()}
+function cartUpdateBadge(){const count=document.querySelector("#cart-count");if(count)count.textContent=cartRead().reduce((sum,item)=>sum+Number(item.quantity||0),0)}
+function addToCart(p){const a=cartRead(),f=a.find(x=>x._id===p._id);if(f)f.quantity++;else a.push({...p,quantity:1});cartSave(a);alert("Product added to cart.");}
+function cartRemove(id){cartSave(cartRead().filter(x=>x._id!==id));cartRender();}
+function cartRender(){const root=document.querySelector("#cart-items");if(!root)return;const items=cartRead();root.innerHTML="";let total=0;items.forEach(p=>{total+=p.price*p.quantity;const row=document.createElement("div");row.className="cart-row";row.innerHTML=`<img src="${p.image}" alt=""><div class="cart-info"><b>${p.name}</b><p>${money(p.price)} × ${p.quantity}</p><button class="btn small" data-remove="${p._id}">Remove</button></div>`;root.appendChild(row);});root.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>cartRemove(b.dataset.remove));const t=document.querySelector("#cart-total");if(t)t.textContent=money(total);}
+document.addEventListener("DOMContentLoaded",()=>{cartRender();cartUpdateBadge()});

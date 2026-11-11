@@ -1,0 +1,7 @@
+const router=require("express").Router(),Product=require("../models/Product"),{protect,adminOnly}=require("../middleware/auth");
+router.get("/",async(req,res,next)=>{try{const f={};if(req.query.category)f.category=req.query.category;if(req.query.q)f.name={$regex:String(req.query.q).slice(0,60),$options:"i"};if(req.query.featured==="true")f.featured=true;const products=await Product.find(f).sort({createdAt:-1}).limit(100);res.json({products});}catch(e){next(e);}});
+router.get("/:id",async(req,res,next)=>{try{const p=await Product.findById(req.params.id);if(!p)return res.status(404).json({message:"Product not found."});res.json({product:p});}catch(e){next(e);}});
+router.post("/",protect,adminOnly,async(req,res,next)=>{try{const{name,category,price}=req.body;if(!name||!category||!Number.isFinite(Number(price))||Number(price)<0)return res.status(400).json({message:"Name, category and valid price are required."});const p=await Product.create(req.body);res.status(201).json({product:p});}catch(e){next(e);}});
+router.put("/:id",protect,adminOnly,async(req,res,next)=>{try{const p=await Product.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true});if(!p)return res.status(404).json({message:"Product not found."});res.json({product:p});}catch(e){next(e);}});
+router.delete("/:id",protect,adminOnly,async(req,res,next)=>{try{const p=await Product.findByIdAndDelete(req.params.id);if(!p)return res.status(404).json({message:"Product not found."});res.json({message:"Product deleted."});}catch(e){next(e);}});
+module.exports=router;

@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",()=>{const f=document.querySelector("#contact-form");if(!f)return;f.onsubmit=async e=>{e.preventDefault();try{const d=await api("/contact",{method:"POST",body:JSON.stringify(Object.fromEntries(new FormData(f)))});notice("message",d.message);f.reset();}catch(e){notice("message",e.message,true);}};});
