@@ -19,7 +19,7 @@ router.post("/chapa/initialize",protect,async(req,res,next)=>{try{
  res.status(201).json({checkoutUrl:data.data.checkout_url,orderId:order._id,message:"Redirecting to Chapa hosted checkout."});
  }catch(e){next(e);}});
 // router.get("/chapa/verify/:orderId",protect,async(req,res,next)=>{try{
- const order=await Order.findOne({_id:req.params.orderId,user:req.user._id});if(!order)return res.status(404).json({message:"Order not found."});
+ const order = await Order.findOne({_id:req.params.orderId,user:req.user._id});if(!order)return res.status(404).json({message:"Order not found."});
  if(order.payment.status==="success")return res.json({paid:true,status:"success",order});
  const ref=req.query.reference;if(!ref)return res.json({paid:false,status:"pending",message:"Payment reference is not available yet. Check again shortly."});
  const response=await fetch(`${base()}/payments/${encodeURIComponent(ref)}/verify`,{headers:{"Authorization":`Bearer ${process.env.CHAPA_PRIVATE_KEY}`}});
