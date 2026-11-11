@@ -1,5 +1,5 @@
 // Change this to your deployed API URL when hosting, e.g. https://your-api.onrender.com/api
-const API=window.ETHIOMARKET_API||"https://ethioshop-5432.onrender.com";
+const API=window.ETHIOMARKET_API||"https://ethioshop-5432.onrender.com/api";
 const money=n=>`ETB ${Number(n).toLocaleString("en-ET")}`;
 const token=()=>localStorage.getItem("em_token");
 async function api(path,options={}){const headers={"Content-Type":"application/json",...(options.headers||{})};if(token())headers.Authorization=`Bearer ${token()}`;const r=await fetch(API+path,{...options,headers});const d=await r.json().catch(()=>({message:"Invalid server response"}));if(!r.ok)throw new Error(d.message||"Request failed");return d;}
