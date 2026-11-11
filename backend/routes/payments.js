@@ -11,7 +11,7 @@ router.post("/chapa/initialize",protect,async(req,res,next)=>{try{
  const response=await fetch(`${base()}/payments/hosted`,{method:"POST",headers:{"Authorization":`Bearer ${process.env.CHAPA_PRIVATE_KEY}`,"Content-Type":"application/json","Idempotency-Key":crypto.randomUUID()},body:JSON.stringify({
    amount:Math.round(total*100),currency:process.env.CHAPA_CURRENCY||"ETB",merchant_reference:merchantReference,
    customer:{first_name:parts[0],last_name:parts.slice(1).join(" ")||"Customer",email:userEmail,phone_number:shipping.phone},
-   return_url:`${process.env.FRONTEND_URL||"https://droomber.github.io/Ethio-market-app/frontend"}/payment-result.html?order=${order._id}`,
+   return_url:`${process.env.FRONTEND_URL||"https://droomber.github.io/Ethioshop/frontend"}/payment-result.html?order=${order._id}`,
    meta:{order_id:String(order._id)}
  })});
  const data=await response.json();if(!response.ok||!data?.data?.checkout_url){await Order.findByIdAndDelete(order._id);return res.status(502).json({message:data.message||"Could not initialize Chapa checkout."});}
