@@ -10,7 +10,7 @@ const app = express();
 // Security & Parsing Middleware
 app.use(helmet());
 app.use(cors({
-  origin: (process.env.CLIENT_ORIGIN || "http://127.0.0.1:5500,http://localhost:5500,http://localhost:3000,https://droomber.github.io/Ethioshop/").split(","),
+  origin: (process.env.CLIENT_ORIGIN || "http://127.0.0.1:5500,http://localhost:5500,http://localhost:3000,https://droomber.github.io").split(","),
   credentials: true
 }));
 app.use(express.json({ limit: "25kb" }));
